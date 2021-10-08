@@ -1,0 +1,3 @@
+[submodule "Assets/aus"]
+	path = Assets/aus
+	url = https://bitbucket.org/alkee/aus.git
