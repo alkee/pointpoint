@@ -227,7 +227,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 179439941}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.0686002, y: -1.5231152, z: 2.6402948}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -246,9 +246,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sourceModel: {fileID: 206475657}
-  worldContainer: {fileID: 1213641710}
+  worldContainer: {fileID: 1885825692}
   randomSeed: 1234
-  initialDistance: 0.4
+  initialDistance: 0.8
   sampleRadius: 0.1
   pixelSize: 0.002
   score: 0

@@ -1,13 +1,15 @@
+using pp;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sample : MonoBehaviour
+public class Sample
+    : MonoBehaviour
 {
     public MeshFilter sourceModel;
     public Transform worldContainer;
 
     public int randomSeed = 1234;
-    public float initialDistance = 0.4f;
+    public float initialDistance = 0.8f;
 
     public float sampleRadius = 0.1f;
     public float pixelSize = 0.002f;
@@ -45,36 +47,6 @@ public class Sample : MonoBehaviour
         score = 100 / (score + 1.0f);
     }
 
-    static GameObject CreateSamplePoints(Vector3 center, List<Vector3> points, float pointSize, Material pointMaterial = null)
-    {
-        if (points.Count == 0) return null;
-
-        // pivot
-        //   + origin(0,0) reference
-        //   + points
-
-        var pivot = new GameObject("pivot");
-        pivot.transform.position = center;
-
-        var origin = new GameObject("origin");
-        origin.transform.parent = pivot.transform;
-
-        //var bounds = new Bounds(points[0], Vector3.zero);
-        foreach (var p in points)
-        {
-            //bounds.Encapsulate(p);
-            var point = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            point.name = $"{p:F4}";
-            point.transform.parent = pivot.transform;
-            point.transform.position = p;
-            point.transform.localScale = Vector3.one * pointSize;
-            if (pointMaterial) point.GetComponent<Renderer>().material = pointMaterial;
-            else point.GetComponent<Renderer>().material.color = Color.red;
-        }
-
-        return pivot;
-    }
-
     public void OnClick_ResetButton()
     {
         InitializeCamera();
@@ -92,15 +64,10 @@ public class Sample : MonoBehaviour
         samples = pointcloud.GetPoints(randomPos, sampleRadius);
         Debug.Log($"sample point count = {samples.Count}"); // TODO: 너무 적은 sample 이면 다시
 
-
-        var pivot = CreateSamplePoints(randomPos, samples, pixelSize);
+        var pivot = Util.CreateSamplePoints(randomPos, samples, pixelSize);
 
         // initial random position, rotation
-        var initPos = Random.insideUnitSphere * 0.4f;
-        if (initPos.magnitude < 0.2f)
-            initPos += initPos.normalized * 0.2f;
-
-        pivot.transform.position = initPos;
+        pivot.transform.position = Random.onUnitSphere * Random.Range(0.2f, 0.4f);
         pivot.transform.rotation = Random.rotation;
 
         if (fragment) Destroy(fragment);
@@ -125,8 +92,8 @@ public class Sample : MonoBehaviour
             tc.mode = mattatz.TransformControl.TransformControl.TransformMode.Rotate;
     }
 
-
     private aus.RollbackTransform hintBackup;
+
     public void OnPointerDown_HintButton()
     {
         if (!fragment) return;
@@ -143,26 +110,9 @@ public class Sample : MonoBehaviour
         hintBackup = null;
     }
 
-
     private void InitializeCamera()
     {
         var lookTarget = sourceModel.GetComponent<Renderer>().bounds.center; // logic position(mesh or transform) could not be same as visual position
-        LookAt(initialDistance, Camera.main.transform, lookTarget);
+        Util.LookAt(initialDistance, Camera.main.transform, lookTarget);
     }
-
-    private static void LookAt(float distance, Transform source, Vector3 target)
-    {
-        LookAt(distance, source, target, Vector3.up);
-    }
-
-    private static void LookAt(float distance, Transform source, Vector3 target, Vector3 up)
-    {
-        var originalDistance = (target - source.position).magnitude;
-        distance -= originalDistance;
-
-        source.LookAt(target, up);
-        var dir = source.forward * -1;
-        source.Translate(dir * distance, Space.World);
-    }
-
 }
